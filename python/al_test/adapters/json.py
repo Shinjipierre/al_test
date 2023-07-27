@@ -8,20 +8,13 @@ from al_test.addressee import Addressee
 
 
 class JsonAdapter(base.AdapterRegistryBaseClass):
-    """ Adapter for Json """
+    """Adapter for Json"""
 
     NAME = "JSON"
     EXTENSION = "json"
 
-    def serialize(self, filepath):
-        """Load a json file and create an Addressee class from it
-
-        Args:
-            filepath (str): A filepath to a json file
-
-        Returns:
-            Addressee: An addressee class
-        """
+    def serialize(self, filepath: str) -> Addressee:
+        """Load a json file and create an Addressee class from it"""
         with open(filepath) as f:
             data = json.load(f)
 
@@ -32,15 +25,8 @@ class JsonAdapter(base.AdapterRegistryBaseClass):
             phone=data.get("phone", ""),
         )
 
-    def deserialize(self, addressee):
-        """Deserialize the given addressee to a json file
-
-        Args:
-            addressee (Addressee): An Addressee
-
-        Returns:
-            str: The created file's filepath
-        """
+    def deserialize(self, addressee: Addressee) -> str:
+        """Deserialize the given addressee to a json file"""
         tmp_file = self._generate_tmp_file()
         with open(tmp_file, "w") as f:
             json.dump(addressee.to_dict(), f)

@@ -8,12 +8,8 @@ from al_test.adapters import base
 from al_test.adapters import *  # noqa: F403,F401
 
 
-def parse_arguments():
-    """Parses the given arguments
-
-    Returns:
-        argparse.ArgumentParser: The parsed arguments
-    """
+def parse_arguments() -> argparse.ArgumentParse:
+    """Parses the given arguments"""
     description = (
         "Animal Logic's coding test, \n"
         "Serialize/deserialize name/address/phone number"
@@ -52,7 +48,7 @@ def parse_arguments():
 
 
 def _show_available_formats():
-    """ Prints the available importers/exporters"""
+    """Prints the available importers/exporters"""
     importers = base.AdapterRegistryBase.get_importers()
     print("Available importers : {}".format([key for key in importers.keys()]))
 

@@ -9,20 +9,13 @@ from al_test.exceptions import MissingInformation
 
 
 class XmlAdapter(base.AdapterRegistryBaseClass):
-    """ Adapter for XML """
+    """Adapter for XML"""
 
     NAME = "XML"
     EXTENSION = "xml"
 
-    def serialize(self, filepath):
-        """Load an AML file and create an Addressee class from it
-
-        Args:
-            filepath (str): A filepath to a json file
-
-        Returns:
-            Addressee: An addressee class
-        """
+    def serialize(self, filepath: str) -> Addressee:
+        """Load an AML file and create an Addressee class from it"""
         # get the root of the xml file
         xml_tree = ElementTree.parse(filepath)
         root = xml_tree.getroot()
@@ -40,15 +33,8 @@ class XmlAdapter(base.AdapterRegistryBaseClass):
         # Return an addressee class
         return Addressee(**info_dict)
 
-    def deserialize(self, addressee):
-        """Deserialize the given addressee to an XML file
-
-        Args:
-            addressee (Addressee): An Addressee
-
-        Returns:
-            str: The created file's filepath
-        """
+    def deserialize(self, addressee: Addressee) -> str:
+        """Deserialize the given addressee to an XML file"""
         # Build an xml tree
         element = ElementTree.Element("Addressee")
         for info in ["name", "address", "phone"]:

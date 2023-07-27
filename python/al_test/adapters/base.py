@@ -4,13 +4,17 @@ from abc import abstractmethod, ABCMeta
 import os
 import tempfile
 
+from al_test.addressee import Addressee
+
 
 class AdapterRegistryBase(ABCMeta):
-    """ Base adapter registry, to know which adapters are available"""
+    """Base adapter registry, to know which adapters are available"""
 
     REGISTRY = {}
 
-    def __new__(cls, name, bases, namespace, **kwargs):
+    def __new__(
+        cls, name: str, bases, namespace: str, **kwargs
+    ) -> "AdapterRegistryBase":
         """
         Register class when child metaclass is instanced,
         arguments passed from ABCMeta
@@ -21,21 +25,13 @@ class AdapterRegistryBase(ABCMeta):
         return new_cls
 
     @classmethod
-    def get_registry(cls):
-        """Get all the classes added in the registry
-
-        Returns:
-            dict : name/variant: adapter
-        """
+    def get_registry(cls) -> dict:
+        """Get all the classes added in the registry"""
         return cls.REGISTRY
 
     @classmethod
-    def get_importers(cls):
-        """Get all the importers with an extension
-
-        Returns:
-            dict: extension: adapter
-        """
+    def get_importers(cls) -> dict:
+        """Get all the importers with an extension"""
         return {
             adapter.EXTENSION: adapter
             for adapter in cls.REGISTRY.values()
@@ -43,12 +39,8 @@ class AdapterRegistryBase(ABCMeta):
         }
 
     @classmethod
-    def get_exporters(cls):
-        """Get all the possible exporters
-
-        Returns:
-            dict: name/variant: adapter
-        """
+    def get_exporters(cls) -> dict:
+        """Get all the possible exporters"""
         return {
             name: adapter
             for name, adapter in cls.REGISTRY.items()
@@ -56,15 +48,8 @@ class AdapterRegistryBase(ABCMeta):
         }
 
     @classmethod
-    def get_needed_importer(cls, filepath):
-        """Get the wanted importer from the extension of the file
-
-        Args:
-            filepath (str):
-
-        Returns:
-            AdapterRegistryBaseClass|None: an adapter if one was found
-        """
+    def get_needed_importer(cls, filepath: str) -> "AdapterRegistryBaseClass" or None:
+        """Get the wanted importer from the extension of the file"""
         _basename, extension = os.path.splitext(filepath)
         if not extension:
             return None
@@ -72,16 +57,10 @@ class AdapterRegistryBase(ABCMeta):
         return cls.get_importers().get(extension[1:], None)
 
     @classmethod
-    def get_needed_exporter(cls, name, variant):
-        """Get the wanted exporter from the extension of the file
-
-        Args:
-            name (str): The name of the exporter
-            variant (str): the wanted variant
-
-        Returns:
-            AdapterRegistryBaseClass|None: an adapter if one was found
-        """
+    def get_needed_exporter(
+        cls, name: str, variant: str
+    ) -> "AdapterRegistryBaseClass" or None:
+        """Get the wanted exporter from the extension of the file"""
         wanted_exporter = "{}/{}".format(name, variant)
         return cls.get_exporters().get(wanted_exporter.lower(), None)
 
@@ -97,37 +76,19 @@ class AdapterRegistryBaseClass(metaclass=AdapterRegistryBase):
     VARIANT = "default"
 
     def __repr__(self):
-        """ Printing """
-        return "<{}> extension : .{}".format(
-            self.__class__.__name__, self.EXTENSION
-        )
+        """Printing"""
+        return "<{}> extension : .{}".format(self.__class__.__name__, self.EXTENSION)
 
-    def _generate_tmp_file(self):
-        """ Generate a tmp file with the wanted extension """
-        return tempfile.NamedTemporaryFile(
-            suffix=".{}".format(self.EXTENSION)
-        ).name
+    def _generate_tmp_file(self) -> str:
+        """Generate a tmp file with the wanted extension"""
+        return tempfile.NamedTemporaryFile(suffix=".{}".format(self.EXTENSION)).name
 
     @abstractmethod
-    def serialize(self, filepath):
-        """Serialize the given file to an Addressee
-
-        Args:
-            filepath (str): A path to a file
-
-        Returns:
-            Adressee: A serialized Addressee class
-        """
+    def serialize(self, filepath: str) -> Addressee:
+        """Serialize the given file to an Addressee"""
         raise NotImplementedError
 
     @abstractmethod
-    def deserialize(self, addressee):
-        """Deserialize the given addressee
-
-        Args:
-            addressee (Addressee): An Addressee
-
-        Returns:
-            str|None: The created file's filepath if available
-        """
+    def deserialize(self, addressee: Addressee) -> str:
+        """Deserialize the given addressee"""
         raise NotImplementedError
